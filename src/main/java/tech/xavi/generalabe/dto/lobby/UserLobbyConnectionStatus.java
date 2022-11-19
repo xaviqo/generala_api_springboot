@@ -1,13 +1,12 @@
 package tech.xavi.generalabe.dto.lobby;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-public class JoinLobbyDto {
+public class UserLobbyConnectionStatus {
 
+    private String id;
     private String nickname;
-    private String lobbyId;
+    private boolean connected;
 
 }

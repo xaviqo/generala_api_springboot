@@ -5,11 +5,14 @@ import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import tech.xavi.generalabe.document.GeneralaUser;
 import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
 import tech.xavi.generalabe.repository.GeneralaUserRepository;
+
+import java.security.Principal;
 
 @AllArgsConstructor
 @Service
@@ -23,7 +26,6 @@ public class CommonUserService {
     }
 
     public GeneralaUser findByUserId(String id){
-        System.out.println(id);
         return generalaUserRepository.findById(id)
                 .orElseThrow(
                         () -> new GeneralaException(GeneralaError.UserIdNotFound, HttpStatus.UNAUTHORIZED)
@@ -32,6 +34,7 @@ public class CommonUserService {
 
     public GeneralaUser getAuthenticatedPlayer(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return findByUserId(auth.getPrincipal().toString());
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        return findByUserId(userDetails.getUsername());
     }
 }

@@ -14,15 +14,15 @@ public class CommonGameService {
 
     private final GameRepository gameRepository;
 
-    public Game findGameById(String gameId){
+    public Game findGameByLobbyId(String lobbyId){
         return gameRepository
-                .findById(gameId)
+                .findByLobbyId(lobbyId)
                 .orElseThrow(() -> new GeneralaException
                         (GeneralaError.GameIdNotFound,
                                 HttpStatus.BAD_REQUEST));
     }
 
-    public Game updateGameStatus(Game game){
+    public Game updateGame(Game game){
         return gameRepository.save(game);
     }
 

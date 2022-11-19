@@ -62,9 +62,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(accessTokenEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                .antMatchers("/websocket/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/lobby/new/**").permitAll()
-                //.antMatchers("/websocket/**").permitAll()
+                .antMatchers("/api/lobby/join/**").permitAll()
+                .antMatchers("/api/lobby/users").hasRole("USER")
                 .antMatchers("/api/game/**").hasRole("USER")
                 .antMatchers("/api/lobby/test").hasRole("USER")
                 .anyRequest().authenticated();

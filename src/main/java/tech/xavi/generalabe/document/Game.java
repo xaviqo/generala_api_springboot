@@ -7,11 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.http.HttpStatus;
 import tech.xavi.generalabe.constant.Global;
+import tech.xavi.generalabe.exception.GeneralaError;
+import tech.xavi.generalabe.exception.GeneralaException;
 import tech.xavi.generalabe.model.Player;
 import tech.xavi.generalabe.model.TimeRule;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,13 +40,37 @@ public class Game {
     private boolean started;
     private boolean finished;
     @JsonIgnore
-    private Set<String> websocketLobbyRegistry;
+    private LinkedHashSet<String> websocketLobbyRegistry;
+
+    public boolean isOpenToEveryone(){
+        return getPassword().isBlank();
+    }
 
     public boolean setNewPlayer(Player player){
         if (!players.contains(player)){
             return this.players.add(player);
         }
         return false;
+    }
+
+    public void removeWebsocketLobbyRegistry(String userId){
+        websocketLobbyRegistry.remove(userId);
+    }
+
+    public void setWebsocketLobbyRegistry(String userId) {
+        this.websocketLobbyRegistry.add(userId);
+    }
+
+    public boolean isAvailable(){
+        return ((getMaxPlayers() > getSubscribedPlayers()) &&
+                !isStarted() && isConfigured());
+    }
+
+    public String getAdminNickname(){
+        for (Player player : players){
+            if (player.getId().equals(adminId)) return player.getNickname();
+        }
+        throw new GeneralaException(GeneralaError.GeneralError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public void setMaxPlayers(int maxPlayers) {
