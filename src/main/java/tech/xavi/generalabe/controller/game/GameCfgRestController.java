@@ -21,8 +21,8 @@ public class GameCfgRestController {
     }
 
     @GetMapping("cfg/{lobbyId}")
-    public ResponseEntity<?> getGameRules(@PathVariable String lobbyId){
-        return new ResponseEntity<>(gameRulesService.getGameRules(lobbyId), HttpStatus.OK);
+    public ResponseEntity<?> gameRulesAndInfo(@PathVariable String lobbyId){
+        return new ResponseEntity<>(gameRulesService.gameRulesAndInfo(lobbyId), HttpStatus.OK);
     }
 
 }

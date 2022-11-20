@@ -32,6 +32,10 @@ public class CommonUserService {
                 );
     }
 
+    public void removeUser(GeneralaUser user){
+        generalaUserRepository.delete(user);
+    }
+
     public GeneralaUser getAuthenticatedPlayer(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) auth.getPrincipal();

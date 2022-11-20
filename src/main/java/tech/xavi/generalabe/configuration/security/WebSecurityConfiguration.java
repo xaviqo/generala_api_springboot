@@ -22,6 +22,7 @@ import tech.xavi.generalabe.service.GeneralaUserDetailsService;
 import tech.xavi.generalabe.service.user.UserService;
 
 import java.util.Arrays;
+import java.util.List;
 
 @AllArgsConstructor
 @Configuration
@@ -66,9 +67,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/lobby/new/**").permitAll()
                 .antMatchers("/api/lobby/join/**").permitAll()
-                .antMatchers("/api/lobby/users").hasRole("USER")
+                .antMatchers("/api/lobby/**").hasRole("USER")
                 .antMatchers("/api/game/**").hasRole("USER")
-                .antMatchers("/api/lobby/test").hasRole("USER")
                 .anyRequest().authenticated();
         http.addFilterBefore(accessTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
@@ -76,10 +76,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:1337","https://localhost:1337"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:1337","https://localhost:1337","http://127.0.0.1:5500"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type","*"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

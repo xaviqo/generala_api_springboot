@@ -31,6 +31,13 @@ public class Global {
 
     public static final int MAX_CHAT_MSG_LEN = 85;
 
+    public static final String WS_LOBBY_TOPIC = "/topic/messages/";
+
     public static final String WS_CONNECT_MSG = " just connected to the room";
     public static final String WS_DISCONNECT_MGS = " just disconnected from the room";
+    public static final String WS_KICK_MSG = " kicked from the room";
+    public static final String WS_DELETE_MSG = "The room has been deleted by the administrator";
+
+    public static final String WS_START_MSG = "The game is about to begin!";
+
 }

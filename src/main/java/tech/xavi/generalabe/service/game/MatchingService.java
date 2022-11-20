@@ -1,22 +1,29 @@
 package tech.xavi.generalabe.service.game;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tech.xavi.generalabe.document.Game;
 import tech.xavi.generalabe.document.GeneralaUser;
 import tech.xavi.generalabe.dto.auth.TokenPayload;
+import tech.xavi.generalabe.dto.lobby.KickPlayerDto;
 import tech.xavi.generalabe.dto.lobby.LocalStorageSessionDto;
 import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
+import tech.xavi.generalabe.model.LobbyInteraction;
 import tech.xavi.generalabe.model.Player;
 import tech.xavi.generalabe.repository.GameRepository;
+import tech.xavi.generalabe.repository.GeneralaUserRepository;
 import tech.xavi.generalabe.service.user.AuthService;
 import tech.xavi.generalabe.service.user.CommonUserService;
 import tech.xavi.generalabe.service.user.UserService;
+import tech.xavi.generalabe.service.websocket.WebSocketChatService;
+import tech.xavi.generalabe.service.websocket.WebSocketConnectionService;
 import tech.xavi.generalabe.utils.UUIDGenerala;
 import tech.xavi.generalabe.utils.mapper.PlayerUserMapper;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class MatchingService {
@@ -25,8 +32,10 @@ public class MatchingService {
     private final CommonUserService commonUserService;
     private final CommonGameService commonGameService;
     private final AuthService authService;
-
     private final GameStatusService gameStatusService;
+    private final WebSocketChatService webSocketChatService;
+    private final WebSocketConnectionService webSocketConnectionService;
+
 
     public LocalStorageSessionDto prepareGameAndAdmin(String nickname){
 
@@ -78,6 +87,98 @@ public class MatchingService {
                 .tokenPayload(tokenPayload)
                 .build();
     }
+
+    public void kickPlayer(KickPlayerDto dto){
+        GeneralaUser admin = commonUserService.getAuthenticatedPlayer();
+        Game game = commonGameService.findGameByLobbyId(admin.getLobby());
+
+        if (!game.getAdminId().equalsIgnoreCase(admin.getId()))
+            throw new GeneralaException(GeneralaError.NotGameAdmin,HttpStatus.FORBIDDEN);
+
+        if (!admin.getLobby().equalsIgnoreCase(dto.getLobbyId()))
+            throw new GeneralaException(GeneralaError.InvalidGameId,HttpStatus.FORBIDDEN);
+
+        if (!game.removePlayer(dto.getPlayerToKickId()))
+            throw new GeneralaException(GeneralaError.ErrorKickLobby,HttpStatus.INTERNAL_SERVER_ERROR);
+
+        GeneralaUser userToKick = commonUserService.findByUserId(dto.getPlayerToKickId());
+
+        webSocketConnectionService.sendActivityMessage(userToKick.getLobby(),userToKick.getNickname(), userToKick.getId(), LobbyInteraction.KICK);
+        commonGameService.updateGame(game);
+        webSocketChatService.removeWsSpamFilter(dto.getPlayerToKickId(), admin.getLobby());
+        commonUserService.removeUser(userToKick);
+
+    }
+
+    public void startGame(){
+
+        GeneralaUser admin = commonUserService.getAuthenticatedPlayer();
+        Game game = commonGameService.findGameByLobbyId(admin.getLobby());
+
+        if (game.isStarted() || game.isFinished())
+            throw new GeneralaException(GeneralaError.GameStartedOrFinished,HttpStatus.FORBIDDEN);
+
+        if (!game.getAdminId().equalsIgnoreCase(admin.getId()))
+            throw new GeneralaException(GeneralaError.NotGameAdmin,HttpStatus.FORBIDDEN);
+
+        if (game.getWebsocketLobbyRegistry().size()<2){
+            throw new GeneralaException(GeneralaError.NotEnoughPlayers, HttpStatus.FORBIDDEN);
+        }
+
+        webSocketConnectionService.sendActivityMessage(game.getLobbyId(),"", "", LobbyInteraction.START);
+
+        game.setStarted(true);
+        commonGameService.updateGame(game);
+
+    }
+
+    public void leaveLobby(String lobbyId, String nickname){
+
+        GeneralaUser user = commonUserService.getAuthenticatedPlayer();
+
+        if (!user.getNickname().equalsIgnoreCase(nickname))
+            throw new GeneralaException(GeneralaError.InvalidNicknameIndicated,HttpStatus.FORBIDDEN);
+
+        if (!user.getLobby().equalsIgnoreCase(lobbyId))
+            throw new GeneralaException(GeneralaError.InvalidGameId,HttpStatus.FORBIDDEN);
+
+        Game game = commonGameService.findGameByLobbyId(user.getLobby());
+
+        if (!game.removePlayer(user.getId()))
+            throw new GeneralaException(GeneralaError.ErrorLeaveLobby,HttpStatus.INTERNAL_SERVER_ERROR);
+
+        commonGameService.updateGame(game);
+        webSocketConnectionService.sendActivityMessage(user.getLobby(),user.getNickname(), user.getId(), LobbyInteraction.LEAVE);
+        webSocketChatService.removeWsSpamFilter(user.getId(), user.getLobby());
+        commonUserService.removeUser(user);
+
+    }
+
+    public void deleteLobby() {
+
+        GeneralaUser admin = commonUserService.getAuthenticatedPlayer();
+        Game game = commonGameService.findGameByLobbyId(admin.getLobby());
+
+        if (!game.getAdminId().equalsIgnoreCase(admin.getId()))
+            throw new GeneralaException(GeneralaError.NotGameAdmin,HttpStatus.FORBIDDEN);
+
+        webSocketConnectionService.sendActivityMessage(game.getLobbyId(), admin.getNickname(), admin.getId(), LobbyInteraction.DELETE);
+
+        try {
+            Thread.sleep(1200);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        game.getPlayers().forEach( p -> {
+            webSocketChatService.removeWsSpamFilter(p.getId(), game.getLobbyId());
+            commonUserService.removeUser(commonUserService.findByUserId(p.getId()));
+        });
+
+        commonGameService.removeGame(game);
+
+    }
+
 
 
 }

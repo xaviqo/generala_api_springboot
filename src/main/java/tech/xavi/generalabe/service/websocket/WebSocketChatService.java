@@ -47,6 +47,16 @@ public class WebSocketChatService {
         return spamFilter.isMessageDifferentFromPreviousOne(userId,newMsg);
     }
 
+    public void removeWsSpamFilter(String userId, String lobbyId){
+        WebSocketSpamFilter spamFilter = spamFilters.get(lobbyId);
+        if (spamFilter != null){
+            spamFilter.removeUser(userId);
+            if (!spamFilter.lobbyHasPlayers()){
+                spamFilters.remove(lobbyId);
+            }
+        }
+    }
+
 
     private WebSocketSpamFilter retrieveSpamFilter(String lobbyId){
         return spamFilters.get(lobbyId);

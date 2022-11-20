@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>tech.xavi</groupId>
 	<artifactId>generalabe</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Generala API</name>
 	<description>Generala Backend API</description>

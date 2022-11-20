@@ -41,6 +41,7 @@ public class Game {
     private boolean finished;
     @JsonIgnore
     private LinkedHashSet<String> websocketLobbyRegistry;
+    private Set<String> kickedPlayers;
 
     public boolean isOpenToEveryone(){
         return getPassword().isBlank();
@@ -51,6 +52,11 @@ public class Game {
             return this.players.add(player);
         }
         return false;
+    }
+
+    public boolean removePlayer(String playerId){
+        removeWebsocketLobbyRegistry(playerId);
+        return this.players.removeIf( p -> p.getId().equalsIgnoreCase(playerId));
     }
 
     public void removeWebsocketLobbyRegistry(String userId){

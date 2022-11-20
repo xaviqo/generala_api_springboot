@@ -34,6 +34,7 @@ public class GameStatusService {
                 .started(false)
                 .finished(false)
                 .websocketLobbyRegistry(new LinkedHashSet<>())
+                .kickedPlayers(new LinkedHashSet<>())
                 .build();
 
         Player player = PlayerUserMapper.toPlayer(admin);

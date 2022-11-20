@@ -32,7 +32,10 @@ public enum GeneralaError {
     NotEnoughPlayers("018","At least two ready players are needed to start the game"),
     NicknameOnlyAZ09("019","Nicknames can only contain letters or numbers"),
     NicknameMaxLength("020","Nicknames maximum length is "+Global.NICKNAME_MAX_LEN+" characters."),
-    NicknameMinLength("021","Nicknames minimum length is "+Global.NICKNAME_MIN_LEN+" characters.")
+    NicknameMinLength("021","Nicknames minimum length is "+Global.NICKNAME_MIN_LEN+" characters."),
+    InvalidNicknameIndicated("022","The user indicated in the request does not belong to you"),
+    ErrorLeaveLobby("023","An error occurred while leaving the lobby"),
+    ErrorKickLobby("024","An error occurred while kicking the player from the lobby")
     ;
 
     private final String code;

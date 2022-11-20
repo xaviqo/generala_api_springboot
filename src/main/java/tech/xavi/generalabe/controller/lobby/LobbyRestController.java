@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tech.xavi.generalabe.service.game.LobbyService;
+import tech.xavi.generalabe.dto.lobby.KickPlayerDto;
 import tech.xavi.generalabe.service.game.MatchingService;
 
 @AllArgsConstructor
@@ -13,7 +13,6 @@ import tech.xavi.generalabe.service.game.MatchingService;
 public class LobbyRestController {
 
     private final MatchingService matchingService;
-    private final LobbyService lobbyService;
 
     @PostMapping("new/{nickname}")
     public ResponseEntity<?> createNewLobby(@PathVariable String nickname){
@@ -25,11 +24,29 @@ public class LobbyRestController {
         return new ResponseEntity<>(matchingService.joinGameAndPrepareUser(lobbyId,nickname), HttpStatus.CREATED);
     }
 
-    @GetMapping("users")
-    public ResponseEntity<?> joinLobby(){
-        return new ResponseEntity<>(lobbyService.usersInLobby(), HttpStatus.OK);
+    @PostMapping("leave/{lobbyId}/{nickname}")
+    public ResponseEntity<?> leaveLobby(@PathVariable String lobbyId, @PathVariable String nickname){
+        matchingService.leaveLobby(lobbyId,nickname);
+        return ResponseEntity.ok("OK");
     }
 
+    @PostMapping("start")
+    public ResponseEntity<?> startLobby(){
+        matchingService.startGame();
+        return ResponseEntity.ok("OK");
+    }
+
+    @PostMapping("kick")
+    public ResponseEntity<?> leaveLobby(@RequestBody KickPlayerDto dto){
+        matchingService.kickPlayer(dto);
+        return ResponseEntity.ok("OK");
+    }
+
+    @DeleteMapping("delete")
+    public ResponseEntity<?> deleteLobby(){
+        matchingService.deleteLobby();
+        return ResponseEntity.ok("OK");
+    }
 
 
 }

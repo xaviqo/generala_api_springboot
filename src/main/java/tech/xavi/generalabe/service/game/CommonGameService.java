@@ -26,5 +26,7 @@ public class CommonGameService {
         return gameRepository.save(game);
     }
 
-
+    public void removeGame(Game game) {
+        gameRepository.delete(game);
+    }
 }

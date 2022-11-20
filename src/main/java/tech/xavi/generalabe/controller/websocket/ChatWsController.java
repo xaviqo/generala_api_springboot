@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import tech.xavi.generalabe.constant.Global;
 import tech.xavi.generalabe.dto.websocket.LobbyMessageDto;
 import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.model.LobbyInteraction;
@@ -31,7 +32,7 @@ public class ChatWsController {
         if (webSocketConnectionService.playerIsInLobbyRegistry(message.getSenderId(),lobby)){
 
             simpMessagingTemplate.convertAndSend(
-                    "/topic/messages/"+lobby,
+                    Global.WS_LOBBY_TOPIC+lobby,
                     messageFilter(lobby,message)
             );
 

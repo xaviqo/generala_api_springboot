@@ -11,6 +11,9 @@ import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
 import tech.xavi.generalabe.service.user.CommonUserService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @AllArgsConstructor
 @Service
 public class GameRulesService {
@@ -19,10 +22,16 @@ public class GameRulesService {
 
     private final CommonUserService commonUserService;
 
-    public GameRulesDto getGameRules(String lobbyId){
+    public GameRulesDto gameRulesAndInfo(String lobbyId){
         GeneralaUser user = commonUserService.getAuthenticatedPlayer();
         checkValid_lobbyId(lobbyId,user.getLobby());
         Game game = commonGameService.findGameByLobbyId(user.getLobby());
+
+        Map<String,String> idsAndPlayers = new HashMap<>();
+
+        game.getPlayers().forEach( p -> {
+            idsAndPlayers.put(p.getId(), p.getNickname());
+        });
 
         return GameRulesDto.builder()
                 .gameAdmin(game.getAdminNickname())
@@ -30,6 +39,8 @@ public class GameRulesService {
                 .timeRule(game.getTimeRule())
                 .openToEveryone(game.isOpenToEveryone())
                 .lobbySize(game.getMaxPlayers())
+                .idsAndPlayers(idsAndPlayers)
+                .alreadyConnectedPlayers(game.getWebsocketLobbyRegistry())
                 .build();
     }
 
