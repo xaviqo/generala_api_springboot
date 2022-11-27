@@ -10,14 +10,13 @@ import tech.xavi.generalabe.utils.UUIDGenerala;
 import tech.xavi.generalabe.utils.mapper.PlayerUserMapper;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
 public class GameStatusService {
 
+    private final ScoreService scoreService;
     private final GameRepository gameRepository;
 
     public Game initGame(GeneralaUser admin){
@@ -28,8 +27,9 @@ public class GameStatusService {
                 .turn(0)
                 .round(0)
                 .maxPlayers(2)
-                .players(new ArrayList<>())
+                .players(new LinkedHashSet<>())
                 .dateTimeCreated(LocalDateTime.now())
+                .scoreTable(new HashMap<>()) //set when game starts
                 .configured(false)
                 .started(false)
                 .finished(false)
@@ -39,12 +39,11 @@ public class GameStatusService {
 
         Player player = PlayerUserMapper.toPlayer(admin);
         player.setIngameId(game.getNextIngameId());
+        player.setScoreSheet(scoreService.generatePlayerScoreSheet());
         game.setNewPlayer(player);
 
         return gameRepository.save(game);
     }
-
-
 
 
 }

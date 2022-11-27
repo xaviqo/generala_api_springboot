@@ -8,16 +8,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
-import tech.xavi.generalabe.constant.Global;
 import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
+import tech.xavi.generalabe.model.CombinationCategory;
 import tech.xavi.generalabe.model.Player;
 import tech.xavi.generalabe.model.TimeRule;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @Data
@@ -33,7 +31,8 @@ public class Game {
     private int round;
     private TimeRule timeRule;
     private int maxPlayers;
-    private List<Player> players;
+    private Set<Player> players;
+    private Map<CombinationCategory,Map<String,Integer>> scoreTable;
     private String password;
     private LocalDateTime dateTimeCreated;
     private boolean configured;
@@ -81,6 +80,14 @@ public class Game {
 
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
+    }
+
+    public List<String> getPlayersIds(){
+        List<String> playersIds = new ArrayList<>();
+        getPlayers().forEach( player -> {
+            playersIds.add(player.getId());
+        });
+        return playersIds;
     }
 
     @JsonIgnore

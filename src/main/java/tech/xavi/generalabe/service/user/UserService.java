@@ -2,8 +2,6 @@ package tech.xavi.generalabe.service.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import tech.xavi.generalabe.constant.Global;
@@ -11,7 +9,6 @@ import tech.xavi.generalabe.document.GeneralaUser;
 import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
 import tech.xavi.generalabe.repository.GeneralaUserRepository;
-import tech.xavi.generalabe.utils.UUIDGenerala;
 
 @AllArgsConstructor
 @Service

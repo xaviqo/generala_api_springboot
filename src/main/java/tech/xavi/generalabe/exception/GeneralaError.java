@@ -17,8 +17,7 @@ public enum GeneralaError {
     GameAlreadyConfigured("006","This game has already been configured"),
     GameStartedOrFinished("007","The game has already started/finished or has reached the limit of players"),
     InvalidGamePassword("008","Wrong game password"),
-    AlreadyIngame("009","You cannot play more than one game at a time"),
-    AlreadyJoined("010","You have already joined this game"),
+    GameNotConfigured("010","You have to configure the game rules"),
 
     SpamFilterTimeBetweenMsg("011","You should leave more time between chat messages"),
     SpamFilterRepeatedMsg("012","Do not repeat the same message in the chat"),

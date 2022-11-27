@@ -27,6 +27,9 @@ public class GameRulesService {
         checkValid_lobbyId(lobbyId,user.getLobby());
         Game game = commonGameService.findGameByLobbyId(user.getLobby());
 
+        if (!game.isConfigured())
+            throw new GeneralaException(GeneralaError.GameNotConfigured, HttpStatus.FORBIDDEN);
+
         Map<String,String> idsAndPlayers = new HashMap<>();
 
         game.getPlayers().forEach( p -> {

@@ -9,21 +9,24 @@ public enum CombinationCategory {
 
     //INFO: https://www.guiaspracticas.com/juegos-de-mesa/generala
 
-    ONES("ones",null,null),
-    TWOS("twos",null,null),
-    THREES("threes",null,null),
-    FOURS("fours",null,null),
-    FIVES("fives",null,null),
-    SIXES("sixes",null,null),
-    FREE("free",null,null),
-    SHORT_STRAIGHT("short",20,5),
-    LONG_STRAIGHT("long",30,5),
-    FULL_HOUSE("full",30,5),
-    POKER("poker",40,5),
-    GENERALA("generala",50,10);
+    ACES("aces",1),
+    DEUCES("deuces",2),
+    THREES("threes",3),
+    FOURS("fours",4),
+    FIVES("fives",5),
+    SIXES("sixes",6),
+    FREE("free",9),
+    FOUR_OF_A_KIND("4 of a kind",10),
+    FULL_HOUSE("full house",11),
+    SHORT_STRAIGHT("short straight",12),
+    LONG_STRAIGHT("long straight",13),
+    GENERALA("generala",14),
 
-    private final String combination;
-    private final Integer points;
-    private final Integer servedExtra;
+    BONUS("bonus",8),
+    SUBTOTAL("subtotal",7),
+    TOTAL("total",15);
+
+    private final String category;
+    private final int sort;
 
 }

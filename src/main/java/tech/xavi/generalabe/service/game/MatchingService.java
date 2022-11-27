@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import tech.xavi.generalabe.constant.Global;
 import tech.xavi.generalabe.document.Game;
 import tech.xavi.generalabe.document.GeneralaUser;
 import tech.xavi.generalabe.dto.auth.TokenPayload;
@@ -23,6 +24,9 @@ import tech.xavi.generalabe.service.websocket.WebSocketConnectionService;
 import tech.xavi.generalabe.utils.UUIDGenerala;
 import tech.xavi.generalabe.utils.mapper.PlayerUserMapper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -35,7 +39,7 @@ public class MatchingService {
     private final GameStatusService gameStatusService;
     private final WebSocketChatService webSocketChatService;
     private final WebSocketConnectionService webSocketConnectionService;
-
+    private final ScoreService scoreService;
 
     public LocalStorageSessionDto prepareGameAndAdmin(String nickname){
 
@@ -74,6 +78,7 @@ public class MatchingService {
 
         Player player = PlayerUserMapper.toPlayer(user);
         player.setIngameId(game.getNextIngameId());
+        player.setScoreSheet(scoreService.generatePlayerScoreSheet());
         game.setNewPlayer(player);
         commonGameService.updateGame(game);
 

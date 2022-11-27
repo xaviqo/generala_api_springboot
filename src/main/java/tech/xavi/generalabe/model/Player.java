@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Map;
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -13,7 +15,7 @@ public class Player {
     private String id;
     private String nickname;
     private int ingameId;
-    private ScoreSheet scoreSheet;
+    private Map<CombinationCategory,Integer> scoreSheet;
     @JsonIgnore
     private DiceCup diceCup;
 

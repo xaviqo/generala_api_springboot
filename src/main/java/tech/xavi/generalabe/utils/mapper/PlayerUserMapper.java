@@ -3,7 +3,8 @@ package tech.xavi.generalabe.utils.mapper;
 import tech.xavi.generalabe.document.GeneralaUser;
 import tech.xavi.generalabe.model.DiceCup;
 import tech.xavi.generalabe.model.Player;
-import tech.xavi.generalabe.model.ScoreSheet;
+
+import java.util.HashMap;
 
 public class PlayerUserMapper {
 
@@ -12,7 +13,7 @@ public class PlayerUserMapper {
                 .id(generalaUser.getId())
                 .nickname(generalaUser.getNickname())
                 .ingameId(0)
-                .scoreSheet(new ScoreSheet())
+                .scoreSheet(new HashMap<>())
                 .diceCup(new DiceCup())
                 .build();
     }
