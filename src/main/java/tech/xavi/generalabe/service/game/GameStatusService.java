@@ -29,7 +29,7 @@ public class GameStatusService {
                 .maxPlayers(2)
                 .players(new LinkedHashSet<>())
                 .dateTimeCreated(LocalDateTime.now())
-                .scoreTable(new HashMap<>()) //set when game starts
+                .scoreTable(new LinkedHashSet<>()) //set when game starts
                 .configured(false)
                 .started(false)
                 .finished(false)

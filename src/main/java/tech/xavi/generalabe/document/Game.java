@@ -10,9 +10,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
-import tech.xavi.generalabe.model.CombinationCategory;
 import tech.xavi.generalabe.model.Player;
+import tech.xavi.generalabe.model.Scores;
 import tech.xavi.generalabe.model.TimeRule;
+import tech.xavi.generalabe.utils.game.GameTimer;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,7 +33,7 @@ public class Game {
     private TimeRule timeRule;
     private int maxPlayers;
     private Set<Player> players;
-    private Map<CombinationCategory,Map<String,Integer>> scoreTable;
+    private Set<Scores> scoreTable;
     private String password;
     private LocalDateTime dateTimeCreated;
     private boolean configured;
@@ -41,16 +42,23 @@ public class Game {
     @JsonIgnore
     private LinkedHashSet<String> websocketLobbyRegistry;
     private Set<String> kickedPlayers;
+    private GameTimer gameTimer;
 
+    public void setGameTimer(GameTimer gameTimer){
+        gameTimer.setTimeRule(getTimeRule());
+        gameTimer.setGameId(getLobbyId());
+        players.forEach(p -> gameTimer.setPlayerId(p.getId()));
+        gameTimer.initializePlayersOnline();
+        this.gameTimer = gameTimer;
+    }
     public boolean isOpenToEveryone(){
         return getPassword().isBlank();
     }
 
-    public boolean setNewPlayer(Player player){
+    public void setNewPlayer(Player player){
         if (!players.contains(player)){
-            return this.players.add(player);
+            this.players.add(player);
         }
-        return false;
     }
 
     public boolean removePlayer(String playerId){
@@ -82,12 +90,26 @@ public class Game {
         this.maxPlayers = maxPlayers;
     }
 
-    public List<String> getPlayersIds(){
-        List<String> playersIds = new ArrayList<>();
-        getPlayers().forEach( player -> {
-            playersIds.add(player.getId());
-        });
-        return playersIds;
+    public void nextTurn(){
+        if (getTurn() < this.players.size()){
+            this.turn++;
+        } else {
+            this.turn = 0;
+        }
+    }
+
+    public boolean isJustStarted(){
+        return (getRound() < 1 && getTurn() <1);
+    }
+
+    public Player getPlayer(GeneralaUser user){
+        for (Player player : players) if (player.getId().equals(user.getId())) return player;
+        return null;
+    }
+
+    public Player getPlayerWhoPlays(){
+        for (Player player : players) if (getTurn() == player.getIngameId()) return player;
+        return null;
     }
 
     @JsonIgnore

@@ -18,5 +18,6 @@ public class Player {
     private Map<CombinationCategory,Integer> scoreSheet;
     @JsonIgnore
     private DiceCup diceCup;
+    private boolean online;
 
 }

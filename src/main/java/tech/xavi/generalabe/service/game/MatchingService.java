@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import tech.xavi.generalabe.constant.Global;
 import tech.xavi.generalabe.document.Game;
 import tech.xavi.generalabe.document.GeneralaUser;
 import tech.xavi.generalabe.dto.auth.TokenPayload;
@@ -14,18 +13,14 @@ import tech.xavi.generalabe.exception.GeneralaError;
 import tech.xavi.generalabe.exception.GeneralaException;
 import tech.xavi.generalabe.model.LobbyInteraction;
 import tech.xavi.generalabe.model.Player;
-import tech.xavi.generalabe.repository.GameRepository;
-import tech.xavi.generalabe.repository.GeneralaUserRepository;
 import tech.xavi.generalabe.service.user.AuthService;
 import tech.xavi.generalabe.service.user.CommonUserService;
 import tech.xavi.generalabe.service.user.UserService;
 import tech.xavi.generalabe.service.websocket.WebSocketChatService;
 import tech.xavi.generalabe.service.websocket.WebSocketConnectionService;
 import tech.xavi.generalabe.utils.UUIDGenerala;
+import tech.xavi.generalabe.utils.game.GameTimer;
 import tech.xavi.generalabe.utils.mapper.PlayerUserMapper;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @AllArgsConstructor
@@ -130,10 +125,11 @@ public class MatchingService {
             throw new GeneralaException(GeneralaError.NotEnoughPlayers, HttpStatus.FORBIDDEN);
         }
 
-        webSocketConnectionService.sendActivityMessage(game.getLobbyId(),"", "", LobbyInteraction.START);
-
+        game.setGameTimer(new GameTimer());
         game.setStarted(true);
         commonGameService.updateGame(game);
+
+        webSocketConnectionService.sendActivityMessage(game.getLobbyId(),"", "", LobbyInteraction.START);
 
     }
 

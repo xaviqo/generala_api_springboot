@@ -34,7 +34,9 @@ public enum GeneralaError {
     NicknameMinLength("021","Nicknames minimum length is "+Global.NICKNAME_MIN_LEN+" characters."),
     InvalidNicknameIndicated("022","The user indicated in the request does not belong to you"),
     ErrorLeaveLobby("023","An error occurred while leaving the lobby"),
-    ErrorKickLobby("024","An error occurred while kicking the player from the lobby")
+    ErrorKickLobby("024","An error occurred while kicking the player from the lobby"),
+
+    ErrorCheckingTurn("025","An error occurred while checking players turn")
     ;
 
     private final String code;

@@ -20,6 +20,11 @@ public class Global {
     public static final int NICKNAME_MAX_LEN = 14;
     public static final int NICKNAME_MIN_LEN = 4;
 
+    // WS TOPICS //
+
+    public static final String CHAT_TOPIC = "chat";
+    public static final String GAME_TOPIC = "game" ;
+
 
     // CHAT GLOBALS //
 
@@ -27,6 +32,7 @@ public class Global {
     public static final int MAX_CHAT_SPAM_POINTS = 8;
     public static final int MAX_CHAT_MSG_LEN = 85;
     public static final String WS_LOBBY_TOPIC = "/topic/messages/";
+    public static final String WS_GAME_TOPIC = "/topic/game/";
     public static final String WS_CONNECT_MSG = " just connected to the room";
     public static final String WS_DISCONNECT_MGS = " just disconnected from the room";
     public static final String WS_KICK_MSG = " kicked from the room";

@@ -22,7 +22,6 @@ public class WebSocketConnectionService {
 
     private final JwtHelper jwtHelper;
     private final SimpMessagingTemplate simpMessagingTemplate;
-
     private final CommonGameService commonGameService;
 
     public boolean playerIsInLobby(String userId, String lobbyId, String tkn){
